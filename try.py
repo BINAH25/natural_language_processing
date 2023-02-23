@@ -103,3 +103,19 @@ def get_distractors_wordnet(syn,word):
         if name is not None and name not in distractors:
             distractors.append(name)
     return distractors
+
+def get_wordsense(sent,word):
+    word= word.lower()
+    
+    if len(word.split())>0:
+        word = word.replace(" ","_")
+    
+    
+    synsets = wn.synsets(word,'n')
+    if synsets:
+        wup = max_similarity(sent, word, 'wup', pos='n')
+        adapted_lesk_output =  adapted_lesk(sent, word, pos='n')
+        lowest_index = min (synsets.index(wup),synsets.index(adapted_lesk_output))
+        return synsets[lowest_index]
+    else:
+        return None
