@@ -1,5 +1,9 @@
 import pke
 from flashtext import KeywordProcessor
+from pywsd.similarity import max_similarity
+from pywsd.lesk import adapted_lesk
+from pywsd.lesk import simple_lesk
+from pywsd.lesk import cosine_lesk
 from nltk.tokenize import sent_tokenize
 from summarizer import Summarizer
 import nltk
@@ -7,6 +11,10 @@ import pprint
 import itertools
 import re
 import string
+import requests
+import json
+import random
+from nltk.corpus import wordnet as wn
 from nltk.corpus import stopwords
 nltk.download('stopwords')
 nltk.download('popular')
