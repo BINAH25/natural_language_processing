@@ -63,13 +63,14 @@ def get_sentences_for_keyword(keywords, sentences):
         keywords_found = keyword_processor.extract_keywords(sentence)
         for key in keywords_found:
             keyword_sentences[key].append(sentence)
-        for key in keyword_sentences.keys():
-            values = keyword_sentences[key]
-            values = sorted(values, key=len, reverse=True)
-            keyword_sentences[key] = values
-            return keyword_sentences
-        
+    for key in keyword_sentences.keys():
+        values = keyword_sentences[key]
+        values = sorted(values, key=len, reverse=True)
+        keyword_sentences[key] = values
+        return keyword_sentences
+    
 sentences = tokenize_sentences(summarized_text)
 keyword_sentence_mapping = get_sentences_for_keyword(filtered_keys, sentences)
         
 print (keyword_sentence_mapping)
+print(filtered_keys)
