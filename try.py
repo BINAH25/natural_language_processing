@@ -2,22 +2,18 @@ import pke
 from flashtext import KeywordProcessor
 from pywsd.similarity import max_similarity
 from pywsd.lesk import adapted_lesk
-from pywsd.lesk import simple_lesk
-from pywsd.lesk import cosine_lesk
 from nltk.tokenize import sent_tokenize
 from summarizer import Summarizer
 import nltk
-import pprint
-import itertools
 import re
 import string
 import requests
-import json
 import random
 from nltk.corpus import wordnet as wn
 from nltk.corpus import stopwords
 nltk.download('stopwords')
-nltk.download('popular')
+#nltk.download('popular')
+
 f = open("sample.txt","r")
 full_text = f.read()
 model = Summarizer()
@@ -142,3 +138,38 @@ def get_distractors_conceptnet(word):
                 distractor_list.append(word2)
                    
     return distractor_list
+
+
+key_distractor_list = {}
+
+for keyword in keyword_sentence_mapping:
+    wordsense = get_wordsense(keyword_sentence_mapping[keyword][0],keyword)
+    if wordsense:
+        distractors = get_distractors_wordnet(wordsense,keyword)
+        if len(distractors) == 0:
+            distractors = get_distractors_conceptnet(keyword)
+        if len(distractors) != 0:
+            key_distractor_list[keyword] = distractors
+    else:
+        
+        distractors = get_distractors_conceptnet(keyword)
+        if len(distractors) != 0:
+            key_distractor_list[keyword] = distractors
+
+index = 1
+print ("#############################################################################")
+print ("NOTE::::::::  Since the algorithm might have errors along the way, wrong answer choices generated might not be correct for some questions. ")
+print ("#############################################################################\n\n")
+for each in key_distractor_list:
+    sentence = keyword_sentence_mapping[each][0]
+    pattern = re.compile(each, re.IGNORECASE)
+    output = pattern.sub( " _______ ", sentence)
+    print ("%s)"%(index),output)
+    choices = [each.capitalize()] + key_distractor_list[each]
+    top4choices = choices[:4]
+    random.shuffle(top4choices)
+    optionchoices = ['a','b','c','d']
+    for idx,choice in enumerate(top4choices):
+        print ("\t",optionchoices[idx],")"," ",choice)
+    print ("\nMore options: ", choices[4:20],"\n\n")
+    index = index + 1
